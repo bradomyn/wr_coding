@@ -1,0 +1,65 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CFLAGS	Makefile	/^CFLAGS=-c -Wall -DVERBO_PRINT -I$(PWD)$/;"	m
+CFLAGS	gf_fast/Makefile	/^CFLAGS=-c -Wall -DVERBO_PRINT -I$(PWD)$/;"	m
+DIV	gf.h	/^enum operation {MULT=0, SUM, DIV};$/;"	e	enum:operation
+Exp_tab	gf_fast/gf256.c	/^unsigned char Exp_tab[256], Log_tab[256];$/;"	v
+LDFLAGS	Makefile	/^LDFLAGS=$/;"	m
+LDFLAGS	gf_fast/Makefile	/^LDFLAGS=$/;"	m
+Log_tab	gf_fast/gf256.c	/^unsigned char Exp_tab[256], Log_tab[256];$/;"	v
+MULT	gf.h	/^enum operation {MULT=0, SUM, DIV};$/;"	e	enum:operation
+OBJECTS	Makefile	/^OBJECTS=$(SOURCES:.c=.o)$/;"	m
+OBJECTS	gf_fast/Makefile	/^OBJECTS=$(SOURCES:.c=.o)$/;"	m
+OBJECTS_16	Makefile	/^OBJECTS_16=$(SOURCES_16:.c=.o)$/;"	m
+POLY	gf.h	10;"	d
+POLY	gf16.h	10;"	d
+SOURCES	Makefile	/^SOURCES=main.c gf256.c$/;"	m
+SOURCES	gf_fast/Makefile	/^SOURCES=gf256.c$/;"	m
+SOURCES_16	Makefile	/^SOURCES_16=main.c gf16.c$/;"	m
+SUM	gf.h	/^enum operation {MULT=0, SUM, DIV};$/;"	e	enum:operation
+TARGET	Makefile	/^TARGET=gf256 gf16$/;"	m
+TARGET	gf_fast/Makefile	/^TARGET=gf$/;"	m
+__WR_FEC_H__	gf.h	2;"	d
+__WR_FEC_H__	gf16.h	2;"	d
+create_gf_db	gf.h	/^void    create_gf_db(struct field_db *gf_db);$/;"	p	signature:(struct field_db *gf_db)
+create_gf_db	gf16.c	/^void create_gf_db(struct field_db *gf_db, uint8_t debug) {$/;"	f	signature:(struct field_db *gf_db, uint8_t debug)
+create_gf_db	gf16.h	/^void    create_gf_db(struct field_db *gf_db);$/;"	p	signature:(struct field_db *gf_db)
+create_gf_db	gf256.c	/^void create_gf_db(struct field_db *gf_db) {$/;"	f	signature:(struct field_db *gf_db)
+db	main.c	/^        create_gf_db(&db);$/;"	v
+exp	gf.h	/^        uint8_t exp[256];$/;"	m	struct:field_db	access:public
+exp	gf16.h	/^        uint8_t exp[256];$/;"	m	struct:field_db	access:public
+field_db	gf.h	/^struct field_db {$/;"	s
+field_db	gf16.h	/^struct field_db {$/;"	s
+field_db::exp	gf.h	/^        uint8_t exp[256];$/;"	m	struct:field_db	access:public
+field_db::exp	gf16.h	/^        uint8_t exp[256];$/;"	m	struct:field_db	access:public
+field_db::log	gf.h	/^        uint8_t log[256];$/;"	m	struct:field_db	access:public
+field_db::log	gf16.h	/^        uint8_t log[256];$/;"	m	struct:field_db	access:public
+gdiv_fast	gf.h	/^uint8_t gdiv_fast(uint8_t a, uint8_t b,struct field_db *gf_db);$/;"	p	signature:(uint8_t a, uint8_t b,struct field_db *gf_db)
+gdiv_fast	gf16.c	/^uint8_t gdiv_fast(uint8_t a, uint8_t b,struct field_db *gf_db) {$/;"	f	signature:(uint8_t a, uint8_t b,struct field_db *gf_db)
+gdiv_fast	gf16.h	/^uint8_t gdiv_fast(uint8_t a, uint8_t b,struct field_db *gf_db);$/;"	p	signature:(uint8_t a, uint8_t b,struct field_db *gf_db)
+gdiv_fast	gf256.c	/^uint8_t gdiv_fast(uint8_t a, uint8_t b,struct field_db *gf_db) {$/;"	f	signature:(uint8_t a, uint8_t b,struct field_db *gf_db)
+gdiv_fast	gf_fast/gf256.c	/^gdiv_fast (unsigned char a, unsigned char b)$/;"	f	signature:(unsigned char a, unsigned char b)
+gen	gf_fast/gf256.c	/^unsigned char gen = 0x03;$/;"	v
+gmul_fast	gf_fast/gf256.c	/^gmul_fast (unsigned char a, unsigned char b)$/;"	f	signature:(unsigned char a, unsigned char b)
+gmul_slow	gf_fast/gf256.c	/^gmul_slow (unsigned char a, unsigned char b)$/;"	f	signature:(unsigned char a, unsigned char b)
+gmult	gf.h	/^uint8_t gmult(uint8_t a, uint8_t b);$/;"	p	signature:(uint8_t a, uint8_t b)
+gmult	gf16.c	/^uint8_t gmult(uint8_t a, uint8_t b) {$/;"	f	signature:(uint8_t a, uint8_t b)
+gmult	gf16.h	/^uint8_t gmult(uint8_t a, uint8_t b);$/;"	p	signature:(uint8_t a, uint8_t b)
+gmult	gf256.c	/^uint8_t gmult(uint8_t a, uint8_t b) {$/;"	f	signature:(uint8_t a, uint8_t b)
+gmult_fast	gf.h	/^uint8_t gmult_fast(uint8_t a, uint8_t b,struct field_db *gf_db);$/;"	p	signature:(uint8_t a, uint8_t b,struct field_db *gf_db)
+gmult_fast	gf16.c	/^uint8_t gmult_fast(uint8_t a, uint8_t b, struct field_db *gf_db) {$/;"	f	signature:(uint8_t a, uint8_t b, struct field_db *gf_db)
+gmult_fast	gf16.h	/^uint8_t gmult_fast(uint8_t a, uint8_t b,struct field_db *gf_db);$/;"	p	signature:(uint8_t a, uint8_t b,struct field_db *gf_db)
+gmult_fast	gf256.c	/^uint8_t gmult_fast(uint8_t a, uint8_t b, struct field_db *gf_db) {$/;"	f	signature:(uint8_t a, uint8_t b, struct field_db *gf_db)
+log	gf.h	/^        uint8_t log[256];$/;"	m	struct:field_db	access:public
+log	gf16.h	/^        uint8_t log[256];$/;"	m	struct:field_db	access:public
+main	gf_fast/gf256.c	/^main (int argc, char **argv)$/;"	f	signature:(int argc, char **argv)
+main	main.c	/^int main(int argc, char **argv) {$/;"	f	signature:(int argc, char **argv)
+operation	gf.h	/^enum operation {MULT=0, SUM, DIV};$/;"	g
+rs_encode	gf.h	/^void rs_encode(uint8_t *msg, struct field_db *gf_db);$/;"	p	signature:(uint8_t *msg, struct field_db *gf_db)
+rs_encode	gf16.c	/^void rs_encode(uint8_t *msg, struct field_db *gf_db) {$/;"	f	signature:(uint8_t *msg, struct field_db *gf_db)
+rs_encode	gf16.h	/^void rs_encode(uint8_t *msg, struct field_db *gf_db);$/;"	p	signature:(uint8_t *msg, struct field_db *gf_db)
+rs_encode	gf256.c	/^void rs_encode(uint8_t *msg, struct field_db *gf_db) {$/;"	f	signature:(uint8_t *msg, struct field_db *gf_db)

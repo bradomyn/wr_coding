@@ -1,0 +1,52 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CFLAGS	Makefile	/^CFLAGS=-c -Wall -DVERBO_PRINT$/;"	m
+LDFLAGS	Makefile	/^LDFLAGS=$/;"	m
+LDPC	wr_fec.h	/^enum fec_type{ LDPC=0, REED_SOLOMON, LT };$/;"	e	enum:fec_type
+LT	wr_fec.h	/^enum fec_type{ LDPC=0, REED_SOLOMON, LT };$/;"	e	enum:fec_type
+N_BYTES	wr_fec.h	11;"	d
+OBJECTS	Makefile	/^OBJECTS=$(SOURCES:.c=.o)$/;"	m
+REED_SOLOMON	wr_fec.h	/^enum fec_type{ LDPC=0, REED_SOLOMON, LT };$/;"	e	enum:fec_type
+SOURCES	Makefile	/^SOURCES=main.c cmd_line.c common.c ldpc.c$/;"	m
+TARGET	Makefile	/^TARGET=wr_ldpc$/;"	m
+VERBO	wr_fec.h	14;"	d
+VERBO	wr_fec.h	16;"	d
+__WR_FEC_H__	wr_fec.h	2;"	d
+__WR_LDPC_H__	ldpc.h	2;"	d
+arg	cmd_line.c	/^        char *arg;$/;"	m	struct:cmd_line_arg	file:	access:public
+cmd_arg	cmd_line.c	/^int cmd_arg(struct wr_fec_opt *fec_opt, int argc, char **argv) {$/;"	f	signature:(struct wr_fec_opt *fec_opt, int argc, char **argv)
+cmd_arg	wr_fec.h	/^int cmd_arg(struct wr_fec_opt *fec_opt, int argc, char **argv);$/;"	p	signature:(struct wr_fec_opt *fec_opt, int argc, char **argv)
+cmd_line_arg	cmd_line.c	/^struct cmd_line_arg {$/;"	s	file:
+cmd_line_arg::arg	cmd_line.c	/^        char *arg;$/;"	m	struct:cmd_line_arg	file:	access:public
+cmd_line_arg::help	cmd_line.c	/^        char *help;$/;"	m	struct:cmd_line_arg	file:	access:public
+cmd_line_list	cmd_line.c	/^static struct cmd_line_arg cmd_line_list[] = {$/;"	v	typeref:struct:cmd_line_arg	file:
+create_payload	common.c	/^void* create_payload(struct wr_fec_opt *fec_opt) {$/;"	f	signature:(struct wr_fec_opt *fec_opt)
+create_payload	wr_fec.h	/^void* create_payload(struct wr_fec_opt *fec_opt);$/;"	p	signature:(struct wr_fec_opt *fec_opt)
+create_redundant_payload	common.c	/^int8_t create_redundant_payload(void *eth_payload, void *redundant_payload, struct wr_fec_opt *fec_opt) {$/;"	f	signature:(void *eth_payload, void *redundant_payload, struct wr_fec_opt *fec_opt)
+create_redundant_payload	wr_fec.h	/^int8_t create_redundant_payload(void *eth_payload, void *redundant_payload, struct wr_fec_opt *fec_opt);$/;"	p	signature:(void *eth_payload, void *redundant_payload, struct wr_fec_opt *fec_opt)
+destroy_payload	common.c	/^void destroy_payload(void *buf) {$/;"	f	signature:(void *buf)
+destroy_payload	wr_fec.h	/^void destroy_payload(void *buf);$/;"	p	signature:(void *buf)
+dump_pl	common.c	/^void dump_pl(void *buf, uint16_t payl_l) {$/;"	f	signature:(void *buf, uint16_t payl_l)
+dump_pl	wr_fec.h	/^void dump_pl(void *buf, uint16_t payl_l);$/;"	p	signature:(void *buf, uint16_t payl_l)
+fec_opt	main.c	/^struct wr_fec_opt fec_opt= {$/;"	v	typeref:struct:wr_fec_opt
+fec_type	wr_fec.h	/^        uint8_t fec_type;$/;"	m	struct:wr_fec_opt	access:public
+fec_type	wr_fec.h	/^enum fec_type{ LDPC=0, REED_SOLOMON, LT };$/;"	g
+help	cmd_line.c	/^        char *help;$/;"	m	struct:cmd_line_arg	file:	access:public
+ldpc_encode	ldpc.c	/^int8_t ldpc_encode(void *eth_payload, void *redundant_payload, struct wr_fec_opt *fec_opt) {$/;"	f	signature:(void *eth_payload, void *redundant_payload, struct wr_fec_opt *fec_opt)
+ldpc_encode	ldpc.h	/^int8_t ldpc_encode(void *eth_payload, void *redundant_payload, struct wr_fec_opt *fec_opt);$/;"	p	signature:(void *eth_payload, void *redundant_payload, struct wr_fec_opt *fec_opt)
+ldpc_matrix_init	ldpc.c	/^int8_t ldpc_matrix_init(void **matrix_ldpc, struct wr_fec_opt *fec_opt) {$/;"	f	signature:(void **matrix_ldpc, struct wr_fec_opt *fec_opt)
+ldpc_matrix_init	ldpc.h	/^int8_t ldpc_matrix_init();$/;"	p	signature:()
+main	main.c	/^int main(int argc, char **argv) {$/;"	f	signature:(int argc, char **argv)
+number	wr_fec.h	/^        uint8_t number;$/;"	m	struct:wr_fec_opt	access:public
+payl_l	wr_fec.h	/^        uint16_t payl_l;$/;"	m	struct:wr_fec_opt	access:public
+print_help	cmd_line.c	/^static void print_help(void){$/;"	f	file:	signature:(void)
+rate	wr_fec.h	/^        uint8_t rate;$/;"	m	struct:wr_fec_opt	access:public
+wr_fec_opt	wr_fec.h	/^struct wr_fec_opt {$/;"	s
+wr_fec_opt::fec_type	wr_fec.h	/^        uint8_t fec_type;$/;"	m	struct:wr_fec_opt	access:public
+wr_fec_opt::number	wr_fec.h	/^        uint8_t number;$/;"	m	struct:wr_fec_opt	access:public
+wr_fec_opt::payl_l	wr_fec.h	/^        uint16_t payl_l;$/;"	m	struct:wr_fec_opt	access:public
+wr_fec_opt::rate	wr_fec.h	/^        uint8_t rate;$/;"	m	struct:wr_fec_opt	access:public
