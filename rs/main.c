@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
 
         rs_init(m);
 
-        rs_encode((void *)puffy, (void *)encoded, &n);
+        rs_encode((void *)puffy, (void *)encoded);
 
         printf("Original msg %s -- redundan symbols %s \n", puffy, encoded);
 

@@ -65,7 +65,7 @@ int8_t init_encoder(struct wr_fec_opt *fec_opt) {
                         res = ldpc_init(fec_opt);
                         break;
                 case REED_SOLOMON:
-                        res = reed_solomon_init();
+                        res = rs_init();
                         break;
                 case LT:
                         break;
@@ -87,7 +87,7 @@ int8_t create_redundant_payload(void *eth_payload, void *encoded_data, struct wr
                         res = ldpc_encode(eth_payload, encoded_data, fec_opt);
                         break;
                 case REED_SOLOMON:
-                        res = reed_solomon_encode(eth_payload, encoded_data, fec_opt);
+                        res = rs_encode(eth_payload, encoded_data, fec_opt);
                         break;
                 case LT:
                         break;
