@@ -6,13 +6,16 @@
 
 #include "rs.h"
 
+struct reed_solomon_conf rs_conf;
+
 int main(int argc, char **argv) {
 
         int8_t c;
-        uint8_t i=0;
+        uint8_t i=0,j;
         uint16_t k, n, N;
         uint8_t m;
         uint8_t *puffy;
+        uint8_t *symbols;
         uint8_t *encoded = NULL;
         uint8_t *decoded = NULL;
         uint16_t len;
@@ -32,33 +35,43 @@ int main(int argc, char **argv) {
         while ((c = getopt (argc, argv, "k:n:s:m:")) != -1) {
                 switch (c) {
                         case 'k' :
-                                k = atoi(optarg);
+                                rs_conf.k = atoi(optarg);
                                 break;
                         case 'n' :
-                                n = atoi(optarg);
+                                rs_conf.n = atoi(optarg);
                                 break;
                         case 'm' :
-                                m = atoi(optarg);
-                                if( m != 4 && m != 8) {
+                                rs_conf.m = atoi(optarg);
+                                if( rs_conf.m != 4 && rs_conf.m != 8) {
                                         printf("GF(2^m) has to be 4 or 8 \n");
                                         return -1;
                                 }
                                 break;
                         case 's' :
-                                puffy = (uint8_t *)optarg;
+                                len = 11;
+
+                                if ((symbols = (uint8_t *)calloc(len, sizeof(uint8_t))) == NULL) {
+                                        printf("ERROR : Can't create generator polynomial \n");
+                                        return -1;
+                                }
+
+                                for (j = 0; j < len; j++)
+                                        //symbols[j] = j+1;
+                                        symbols[j] = len - j;
                                 break;
                 }
-                i+=1;
         }
 
-        len = strlen((char *)puffy);
         printf("Length string to encode %d bytes, in GF256 %d symbols, in GF16 %d \n",len,len,2*len);
 
-        rs_init(m);
+        for (i = 0; i < len ; i++)
+               printf("%d ", symbols[i]);
 
-        rs_encode((void *)puffy, (void *)encoded);
+        rs_init();
 
-        printf("Original msg %s -- redundan symbols %s \n", puffy, encoded);
+        rs_encode((void *)symbols, (void *)encoded);
+
+        //printf("Original msg %s -- redundan symbols %s \n", puffy, encoded);
 
         rs_decode((void *)encoded, (void *)decoded);
 

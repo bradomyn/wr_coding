@@ -65,7 +65,7 @@ int8_t init_encoder(struct wr_fec_opt *fec_opt) {
                         res = ldpc_init(fec_opt);
                         break;
                 case REED_SOLOMON:
-                        res = rs_init();
+                        res = rs_init(fec_opt);
                         break;
                 case LT:
                         break;

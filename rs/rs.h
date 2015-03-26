@@ -2,11 +2,16 @@
 #define __WR_RS_H__
 #include <stdint.h>
 
-#include "gf.h"
+#include <galois.h>
+#include <genpoly.h>
 #include "rs.h"
 
-extern struct field_db a;
-extern struct reed_solomon_op rs_op;
+struct reed_solomon_op {
+        uint8_t *(*gen_poly)(uint8_t n, uint8_t alpha, uint8_t k, uint8_t m);
+        int (*sum)(int a, int b, int w);
+        int (*mult)(int a, int b, int w);
+        int (*div)(int a, int b, int w);
+};
 
 struct reed_solomon_conf {
         uint16_t n;
@@ -16,7 +21,7 @@ struct reed_solomon_conf {
 
 extern struct reed_solomon_conf rs_conf;
 
-int8_t rs_init(uint8_t m);
+int8_t rs_init();
 int8_t rs_encode(void *eth_payload, void *encoded_data);
 int8_t rs_decode(void *encoded_data, void *decoded_data);
 
