@@ -31,6 +31,7 @@ plank@cs.utk.edu
 
 extern int galois_single_multiply(int a, int b, int w);
 extern int galois_single_divide(int a, int b, int w);
+extern int galois_single_sum(int a, int b, int w);
 extern int galois_log(int value, int w);
 extern int galois_ilog(int value, int w);
 
@@ -67,20 +68,20 @@ void galois_region_xor(           char *r1,         /* Region 1 */
 void galois_w08_region_multiply(char *region,       /* Region to multiply */
                                   int multby,       /* Number to multiply by */
                                   int nbytes,       /* Number of bytes in region */
-                                  char *r2,         /* If r2 != NULL, products go here.  
+                                  char *r2,         /* If r2 != NULL, products go here.
                                                        Otherwise region is overwritten */
                                   int add);         /* If (r2 != NULL && add) the produce is XOR'd with r2 */
 
 void galois_w16_region_multiply(char *region,       /* Region to multiply */
                                   int multby,       /* Number to multiply by */
                                   int nbytes,       /* Number of bytes in region */
-                                  char *r2,         /* If r2 != NULL, products go here.  
+                                  char *r2,         /* If r2 != NULL, products go here.
                                                        Otherwise region is overwritten */
                                   int add);         /* If (r2 != NULL && add) the produce is XOR'd with r2 */
 
 void galois_w32_region_multiply(char *region,       /* Region to multiply */
                                   int multby,       /* Number to multiply by */
                                   int nbytes,       /* Number of bytes in region */
-                                  char *r2,         /* If r2 != NULL, products go here.  
+                                  char *r2,         /* If r2 != NULL, products go here.
                                                        Otherwise region is overwritten */
                                   int add);         /* If (r2 != NULL && add) the produce is XOR'd with r2 */
