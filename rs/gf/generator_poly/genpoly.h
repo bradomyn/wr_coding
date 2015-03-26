@@ -3,7 +3,8 @@
 
 #include <stdint.h>
 #include <string.h>
-//#include "../galois.h"
+//#include "../galois/galois.h"
+#include <galois.h>
 
 typedef uint8_t generator_poly[255];
 
