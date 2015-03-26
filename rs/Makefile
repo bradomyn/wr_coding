@@ -1,18 +1,14 @@
-CFLAGS=-c -Wall -DVERBO_PRINT -I./ -Igf/ -I../
+CFLAGS=-c -Wall -DVERBO_PRINT -I./ -Igf/galois/ -I../ -Igf/generator_poly
 LDFLAGS=
-SOURCES=main.c gf/gf256.c rs.c
-SOURCES_16=main.c gf/gf16.c rs.c
+GF_SOURCE=gf/galois/galois.c gf/generator_poly/genpoly.c
+SOURCES=main.c rs.c $(GF_SOURCE)
 OBJECTS=$(SOURCES:.c=.o)
-OBJECTS_16=$(SOURCES_16:.c=.o)
-TARGET=rs256 rs16
+TARGET=rs
 
 all: $(TARGET)
     
-rs256 : $(OBJECTS) 
+rs : $(OBJECTS) 
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
-
-rs16 : $(OBJECTS_16) 
-	$(CC) $(LDFLAGS) $(OBJECTS_16) -o $@
 
 .c.o:
 	$(CC) $(CFLAGS) $< -o $@
