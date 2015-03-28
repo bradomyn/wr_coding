@@ -10,7 +10,7 @@ struct reed_solomon_conf rs_conf;
 
 int main(int argc, char **argv) {
 
-        int8_t c;
+        char *c;
         uint8_t i=0,j;
         uint16_t k, n, N;
         uint8_t m;
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
         uint8_t *decoded = NULL;
         uint16_t len;
 
-        if(argc < 2) {
+        if(argc < 9) {
                 printf("Usage: %s [OPTION..] STRING_TO_ENCODE \n",argv[0]);
 
                 printf("\n");
@@ -32,48 +32,79 @@ int main(int argc, char **argv) {
                 return 0;
         }
 
-        while ((c = getopt (argc, argv, "k:n:s:m:")) != -1) {
-                switch (c) {
+        for( i = 1; i < argc; i++ ) {
+                c = argv[i];
+
+                switch (c[1]) {
                         case 'k' :
-                                rs_conf.k = atoi(optarg);
+                                rs_conf.k = atoi(argv[++i]);
                                 break;
                         case 'n' :
-                                rs_conf.n = atoi(optarg);
+                                rs_conf.n = atoi(argv[++i]);
                                 break;
                         case 'm' :
-                                rs_conf.m = atoi(optarg);
-                                if( rs_conf.m != 4 && rs_conf.m != 8) {
-                                        printf("GF(2^m) has to be 4 or 8 \n");
-                                        return -1;
-                                }
+                                rs_conf.m = atoi(argv[++i]);
+                                //if( rs_conf.m != 4 && rs_conf.m != 8) {
+                                //        printf("GF(2^m) has to be 4 or 8 \n");
+                                //        return -1;
+                                //}
                                 break;
                         case 's' :
-                                len = 11;
+                                len = argc - i - 1;
+                                printf("Source Symbols Length %d \n", len);
 
-                                if ((symbols = (uint8_t *)calloc(len, sizeof(uint8_t))) == NULL) {
+                                if ((symbols = (uint8_t *)calloc(len - 1, sizeof(uint8_t))) == NULL) {
                                         printf("ERROR : Can't create generator polynomial \n");
                                         return -1;
                                 }
 
-                                for (j = 0; j < len; j++)
-                                        //symbols[j] = j+1;
-                                        symbols[j] = len - j;
+                                for (j = 0, i++; i < argc; j++,i++) {
+                                        //symbols[j] = atoi(argv[i]);
+
+                                        symbols[j] = (uint8_t)strtol(argv[i], NULL, 0);
+                                }
                                 break;
                 }
+
         }
+
+        printf("Source Symbols : ");
+        for ( i = 0; i < rs_conf.k; i++)
+                printf("%x ", symbols[i]);
+
+        printf("\n");
 
         printf("Length string to encode %d bytes, in GF256 %d symbols, in GF16 %d \n",len,len,2*len);
 
-        for (i = 0; i < len ; i++)
-               printf("%d ", symbols[i]);
-
         rs_init();
 
-        rs_encode((void *)symbols, (void *)encoded);
+        if ((encoded = (uint8_t *)calloc(rs_conf.n, sizeof(uint8_t))) == NULL) {
+                printf("ERROR : Can't create generator polynomial \n");
+                return -1;
+        }
 
-        //printf("Original msg %s -- redundan symbols %s \n", puffy, encoded);
 
-        rs_decode((void *)encoded, (void *)decoded);
+        rs_encode(symbols, encoded);
+
+        printf("Original msg: ");
+        for ( i = 0; i < rs_conf.k; i++)
+                printf(" %x ", symbols[i]);
+
+        printf("\n");
+
+        printf("Encoded msg: ");
+
+        for ( i = 0; i < rs_conf.n; i++) {
+                if ( i >= rs_conf.n - rs_conf.k)
+                        encoded[i] = symbols[i - (rs_conf.n - rs_conf.k)];
+
+                        printf("%x ", encoded[i]);
+
+        }
+
+        printf("\n");
+
+        rs_decode(encoded, decoded);
 
         return 0;
 }
