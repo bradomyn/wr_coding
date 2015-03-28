@@ -1,9 +1,9 @@
 #ifndef __WR_RS_H__
 #define __WR_RS_H__
 #include <stdint.h>
-
 #include <galois.h>
 #include <genpoly.h>
+
 #include "rs.h"
 
 struct reed_solomon_op {
@@ -22,7 +22,7 @@ struct reed_solomon_conf {
 extern struct reed_solomon_conf rs_conf;
 
 int8_t rs_init();
-int8_t rs_encode(void *eth_payload, void *encoded_data);
-int8_t rs_decode(void *encoded_data, void *decoded_data);
+int8_t rs_encode(uint8_t *eth_payload, uint8_t *encoded_data);
+int8_t rs_decode(uint8_t *encoded_data, uint8_t *decoded_data);
 
 #endif
