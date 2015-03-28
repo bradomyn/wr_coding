@@ -28,7 +28,7 @@ static uint8_t gf_poly_eval(uint8_t *code, uint8_t value, uint8_t len) {
 
 static void rs_calc_sydrom( uint8_t *encoded, uint8_t *synd) {
 
-        uint8_t i;
+        int16_t i;
         for (i = rs_conf.n - rs_conf.k; i >= 0 ; i++) {  /// be carefull with the order
                 synd[i] = gf_poly_eval(encoded, galois_ilog(i, rs_conf.m), rs_conf.n);
         }
