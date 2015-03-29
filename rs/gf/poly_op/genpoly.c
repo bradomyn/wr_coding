@@ -6,14 +6,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "genpoly.h"
+#include "poly_op.h"
 
 int main(int argc, char **argv) {
 
-        uint8_t *gen_poly;
+        rs_poly gen_poly;
         int8_t c;
-        uint32_t i, max_degree;
-        uint16_t k, m, n, a;
+        uint32_t i;
+        uint8_t a, k, n, m;
 
         if(argc < 2) {
                 printf("Usage: %s -k -m -n -a \n",argv[0]);
@@ -42,18 +42,19 @@ int main(int argc, char **argv) {
                 }
         }
 
-        max_degree = n - k;
+        gf_init_poly(&gen_poly, n - k, m, "GEN_POL");
+        gf_gen_poly(&gen_poly, a);
 
-        gen_poly = genpoly(n, a, k, m);
-
-        for( i = 0; i <= max_degree ; i++) {
+        for( i = 0; i <= gen_poly.degree; i++) {
                 if ( i == 0 )
-                        printf(" %d +", gen_poly[i]);
-                else if (i < max_degree)
-                        printf(" %dx^^%d +", gen_poly[i], i);
+                        printf(" %d +", gen_poly.poly[i]);
+                else if (i < gen_poly.degree)
+                        printf(" %dx^%d +", gen_poly.poly[i], i);
                 else
-                        printf(" %dx^^%d \n", gen_poly[i], i);
+                        printf(" %dx^%d \n", gen_poly.poly[i], i);
         }
+
+        gf_free_poly(&gen_poly);
 
         return 0;
 }
