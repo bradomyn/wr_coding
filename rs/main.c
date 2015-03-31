@@ -78,11 +78,15 @@ int main(int argc, char **argv) {
 
         poly_op.init(&dec_symbols, rs_conf.k, rs_conf.m, "DEC_SYMB");
 
-        enc_symbols.poly[24] = 0;
-        enc_symbols.poly[23] = 0;
-        poly_op.init(&miss_symbols, 2, rs_conf.m, "MISS_SYMB");
-        miss_symbols.poly[0] = 1;
-        miss_symbols.poly[1] = 2;
+        //enc_symbols.poly[24] = 0;
+        //enc_symbols.poly[23] = 0;
+        //poly_op.init(&miss_symbols, 2, rs_conf.m, "MISS_SYMB");
+        //miss_symbols.poly[0] = 24;
+        //miss_symbols.poly[1] = 23;
+        
+        enc_symbols.poly[25] = 0;
+        poly_op.init(&miss_symbols, 1, rs_conf.m, "MISS_SYMB");
+        miss_symbols.poly[0] = 25;
 
         //poly_op.init(&miss_symbols, 2, rs_conf.m, "MISS_SYMB");
         //miss_symbols.poly[0] = 2;
@@ -90,6 +94,7 @@ int main(int argc, char **argv) {
         //enc_symbols.poly[2] = 1;
         //enc_symbols.poly[9] = 11;
 
+        poly_op.dump("RX_POLY",&enc_symbols);
 
         rs_decode(&enc_symbols, &dec_symbols, &miss_symbols);
 
