@@ -12,12 +12,11 @@ int main(int argc, char **argv) {
 
         char *c;
         uint8_t i=0,j;
-        uint16_t k, n, N;
-        uint8_t m;
-        uint8_t *puffy;
-        uint8_t *symbols;
-        uint8_t *encoded = NULL;
-        uint8_t *decoded = NULL;
+        rs_poly src_symbols;
+        rs_poly miss_symbols;
+        rs_poly enc_symbols;
+        rs_poly dec_symbols;
+
         uint16_t len;
 
         if(argc < 9) {
@@ -25,8 +24,8 @@ int main(int argc, char **argv) {
 
                 printf("\n");
                 printf("OPTIONS:\n");
-                printf("-k, \t\t Length message in Symbols \n");
-                printf("-n, \t\t Redundant Symbols \n");
+                printf("-k, \t\t Length message in src_symbols \n");
+                printf("-n, \t\t Redundant src_symbols \n");
                 printf("-m, \t\t Galois Filed index GF(2^m), 4 or 8 \n");
                 printf("-s, \t\t String\n");
                 return 0;
@@ -44,67 +43,55 @@ int main(int argc, char **argv) {
                                 break;
                         case 'm' :
                                 rs_conf.m = atoi(argv[++i]);
-                                //if( rs_conf.m != 4 && rs_conf.m != 8) {
-                                //        printf("GF(2^m) has to be 4 or 8 \n");
-                                //        return -1;
-                                //}
+                                if( rs_conf.m != 4 && rs_conf.m != 8) {
+                                        printf("GF(2^m) has to be 4 or 8 \n");
+                                        return -1;
+                                }
                                 break;
                         case 's' :
                                 len = argc - i - 1;
-                                printf("Source Symbols Length %d \n", len);
+                                printf("Source src_symbols Length %d \n", len);
+                                poly_op.init(&src_symbols, len-1, rs_conf.m, "SRC_SYMB");
 
-                                if ((symbols = (uint8_t *)calloc(len - 1, sizeof(uint8_t))) == NULL) {
-                                        printf("ERROR : Can't create generator polynomial \n");
-                                        return -1;
-                                }
-
-                                for (j = 0, i++; i < argc; j++,i++) {
-                                        //symbols[j] = atoi(argv[i]);
-
-                                        symbols[j] = (uint8_t)strtol(argv[i], NULL, 0);
-                                }
+                                for (j = 0, i++; i < argc; j++,i++)
+                                        src_symbols.poly[j] = (uint8_t)strtol(argv[i], NULL, 0);
                                 break;
                 }
 
         }
 
-        printf("Source Symbols : ");
-        for ( i = 0; i < rs_conf.k; i++)
-                printf("%x ", symbols[i]);
+        poly_op.dump("SRC_SYMB", &src_symbols);
 
-        printf("\n");
-
-        printf("Length string to encode %d bytes, in GF256 %d symbols, in GF16 %d \n",len,len,2*len);
-
-        rs_init();
-
-        if ((encoded = (uint8_t *)calloc(rs_conf.n, sizeof(uint8_t))) == NULL) {
-                printf("ERROR : Can't create generator polynomial \n");
+        /* sanity checks and init the rs polynom */
+        if (rs_init() < 0)
                 return -1;
-        }
+
+        poly_op.dump("GEN_POLY", &gen_poly);
+
+        /* init enc_symbols */
+        poly_op.init(&enc_symbols, rs_conf.n, rs_conf.m, "ENC_SYMB");
+
+        /* encoded */
+        rs_encode(&src_symbols, &enc_symbols);
+
+        poly_op.dump("ENC_POLY", &enc_symbols);
+
+        poly_op.init(&dec_symbols, rs_conf.k, rs_conf.m, "DEC_SYMB");
+
+        enc_symbols.poly[24] = 0;
+        enc_symbols.poly[23] = 0;
+        poly_op.init(&miss_symbols, 2, rs_conf.m, "MISS_SYMB");
+        miss_symbols.poly[0] = 1;
+        miss_symbols.poly[1] = 2;
+
+        //poly_op.init(&miss_symbols, 2, rs_conf.m, "MISS_SYMB");
+        //miss_symbols.poly[0] = 2;
+        //miss_symbols.poly[1] = 9;
+        //enc_symbols.poly[2] = 1;
+        //enc_symbols.poly[9] = 11;
 
 
-        rs_encode(symbols, encoded);
-
-        printf("Original msg: ");
-        for ( i = 0; i < rs_conf.k; i++)
-                printf(" %x ", symbols[i]);
-
-        printf("\n");
-
-        printf("Encoded msg: ");
-
-        for ( i = 0; i < rs_conf.n; i++) {
-                if ( i >= rs_conf.n - rs_conf.k)
-                        encoded[i] = symbols[i - (rs_conf.n - rs_conf.k)];
-
-                        printf("%x ", encoded[i]);
-
-        }
-
-        printf("\n");
-
-        rs_decode(encoded, decoded);
+        rs_decode(&enc_symbols, &dec_symbols, &miss_symbols);
 
         return 0;
 }

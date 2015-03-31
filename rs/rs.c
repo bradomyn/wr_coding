@@ -1,157 +1,169 @@
 #include "rs.h"
 
-#define DEGREE(x) (sizeof(x) / sizeof(x[0]))
-
 struct reed_solomon_op rs_op = {
-        .gen_poly = genpoly,
         .sum = galois_single_sum,
         .mult = galois_single_multiply,
-        .div  = galois_single_divide,
+        .div = galois_single_divide,
+        .exp = galois_ilog,
+        .log = galois_log,
 };
 
 struct reed_solomon_conf rs_conf;
 
-static uint8_t gf_poly_eval(uint8_t *code, uint8_t value, uint8_t len) {
+rs_poly gen_poly;
+rs_poly synd;
 
-        uint8_t poly;
-        uint16_t i;
+struct polynomial_op poly_op = {
+        .init = gf_init_poly,
+        .free = gf_free_poly,
+        .dump = dump_poly,
+        .gen_poly = gf_gen_poly,
+        .eval = gf_poly_eval,
+        .mult = gf_poly_mult,
+};
 
-        poly = code[0];
-
-        for (i=1; i < len; i++) {
-
-                poly = rs_op.mult(poly, value, 8) ^ code[i];
-        }
-
-        return poly;
-}
-
-static void rs_calc_sydrom( uint8_t *encoded, uint8_t *synd) {
+void rs_calc_sydrom(rs_poly *enc_symbols) {
 
         int16_t i;
-        for (i = rs_conf.n - rs_conf.k; i >= 0 ; i++) {  /// be carefull with the order
-                synd[i] = gf_poly_eval(encoded, galois_ilog(i, rs_conf.m), rs_conf.n);
+
+        //for (i = rs_conf.n_k - 1; i >= 0 ; i--) {
+        for (i = 0; i < rs_conf.n_k; i++) {
+                synd.poly[i] = poly_op.eval(enc_symbols, rs_op.exp(i, rs_conf.m));
+                //synd.poly[i] = poly_op.eval(enc_symbols, rs_op.exp(rs_conf.n_k - i - 1, rs_conf.m));
         }
 }
 
 int8_t rs_init() {
 
-        if ((2 << rs_conf.m) < (rs_conf.n + rs_conf.k)) {
+        rs_conf.n_k = rs_conf.n - rs_conf.k;
+
+        if ((2 << rs_conf.m) < (rs_conf.n_k)) {
                 printf("ERROR : RS n+k is bigger than the Close Space of GF\n");
                 return -1;
         }
 
+        /* poly init */
+        poly_op.init(&gen_poly, rs_conf.n_k, rs_conf.m, "GEN_POLY");
+
+        /* generator poly */
+        poly_op.gen_poly(&gen_poly, 2);
+
+        poly_op.init(&synd, rs_conf.n_k, rs_conf.m, "SYND_POLY");
+
         return 0;
 }
 
-int8_t rs_encode(uint8_t *eth_payload, uint8_t *encoded_data) {
+int8_t rs_encode(rs_poly *src_symbols, rs_poly *enc_symbols) {
 
-        uint8_t *gen_poly;
-        uint8_t *quotient;
-        int16_t i, j, t;
+        int16_t  i, j, degree_enc, degree_gen;
+        uint8_t coef;
 
-        uint16_t gen_poly_l;
-        uint16_t dg_dividend;
-        uint16_t dg_divisor;
+        degree_enc = enc_symbols->degree;
+        degree_gen = gen_poly.degree;
 
-        if ((quotient = (uint8_t *)calloc(rs_conf.k, sizeof(uint8_t))) == NULL) {
-                printf("ERROR : Can't create generator polynomial \n");
-                return -1;
+        for (i = 0; i <= degree_enc; i++) {
+                enc_symbols->poly[i + degree_gen] = src_symbols->poly[i];
         }
 
-        // generator poly
-        gen_poly = rs_op.gen_poly(rs_conf.n, 2, rs_conf.k, rs_conf.m);
-
-        printf("Generator Poly: ");
-
-        for(i = 0; i < rs_conf.n - rs_conf.k + 1; i++)
-                printf("%x ", gen_poly[i]);
-
-        printf("\n");
-
-
-        gen_poly_l = rs_conf.n - rs_conf.k + 1;
-
-        // 1) source * x^(m-k)
-        // it is done moving the pointer X symbols
-        memset(encoded_data, 0, rs_conf.n * sizeof(uint8_t));
-
-        for (i = rs_conf.n, t = rs_conf.k; t <= 0, (i >= rs_conf.n - rs_conf.k); i--, t--)
-                 encoded_data[i] = *(((uint8_t *)eth_payload)+t);
-
-        printf("Step 1) Symbol vector * x^(m-k): ");
-        for (i = 0; i < rs_conf.n ; i++)
-               printf("%x ", encoded_data[i]);
-        printf("\n");
-
-        // 2) rs = (source * x^(m-k)) / gen_poly
-        printf("Step 2) rs = (source * x^(m-k)) / gen_poly \n");
-
-        dg_dividend = rs_conf.n - 1;
-        dg_divisor  = gen_poly_l - 1;
-
-        //printf("\nSymbols L %d Gen Poly L %d \n",dg_dividend, dg_divisor);
-
-        for ( i = 0; i < rs_conf.n - gen_poly_l + 1; i++) {
-                for ( j = 0; j < gen_poly_l; j++) {
-                        if ( j == 0) {
-
-                                quotient[i] = (uint8_t)encoded_data[dg_dividend-i];
-                                encoded_data[dg_dividend-i] = 0;
-
-                                printf("quotient %x \n", quotient[i]);
-
-                        } else {
-
-                                printf("encoded_data %x - (gen_pol %x * %x) \n", encoded_data[dg_dividend-i-j],
-                                                                            gen_poly[dg_divisor - j],
-                                                                            quotient[i]);
-
-                                encoded_data[dg_dividend-i-j] = rs_op.sum(encoded_data[dg_dividend-i-j],
-                                                                rs_op.mult(quotient[i],
-                                                                gen_poly[dg_divisor - j], rs_conf.m), rs_conf.m);
-
-                                printf("--> %x \n", encoded_data[dg_dividend-i-j]);
-
-                        }
+        for (i = degree_enc - 1; i >= degree_gen; --i) {
+                coef = enc_symbols->poly[i];
+                if (coef != 0) {
+                        for (j = degree_gen - 1; j >= 0; --j)
+                                enc_symbols->poly[i + j - degree_gen] ^=
+                                        rs_op.mult(gen_poly.poly[j], coef, gen_poly.base);
                 }
-                printf("------------ \n");
-                for (t = 0; t < rs_conf.n ; t++)
-                        printf("%x ", encoded_data[t]);
-
-                printf("\n --------- \n");
         }
 
-        printf("Enconded Symbols : \n");
-        for (t = 0; t < rs_conf.n - rs_conf.k ; t++) {
-
-                if ( t != 0 )
-                        printf("+ %x x^%d ", encoded_data[t],t);
-                else
-                        printf("%x ", encoded_data[t]);
+        for (i = 0; i <= src_symbols->degree; i++) {
+                enc_symbols->poly[i+degree_gen] = src_symbols->poly[i];
         }
-
-        printf("\n");
-
 
         return 0;
 }
 
-int8_t rs_decode(uint8_t *encoded_data, uint8_t *decoded_data) {
 
-        uint8_t *synd;
-        uint8_t l, i;
+int8_t rs_decode(rs_poly *enc_symbols, rs_poly *decoded_data, rs_poly *miss_poly) {
 
-        l = rs_conf.n - rs_conf.k;
+        uint8_t i;
 
-        synd = (uint8_t *) calloc( l, sizeof(uint8_t));
+        rs_calc_sydrom(enc_symbols);
 
-        rs_calc_sydrom( encoded_data, synd);
+        poly_op.dump("SYND_PO", &synd);
 
-        for(i = 0; i < l; i++)
-                printf("%d ", synd[i]);
-
-        printf("\n");
+        rs_erase(enc_symbols, &synd, miss_poly);
 
         return 0;
 }
+
+int8_t rs_erase(rs_poly *enc_symbols, rs_poly *synd, rs_poly *miss_poly) {
+        uint8_t y, z, t;
+
+        rs_poly x;
+        rs_poly p;
+        rs_poly q;
+        rs_poly mult;
+        rs_poly qprime;
+        int16_t i, j;
+
+        poly_op.init(&x, 2, synd->base, "X_POLY");
+        poly_op.init(&q, miss_poly->degree + 1,synd->base, "OMEGA_POLY");
+        poly_op.init(&qprime, miss_poly->degree - 1,synd->base, "OMEGA_PRIM_POLY");
+        poly_op.init(&mult, miss_poly->degree + 1, synd->base, "MULT_POLY");
+        poly_op.init(&p, 2*miss_poly->degree, synd->base, "LAMBDA_POLY");
+
+
+        q.poly[0] = 1;
+        x.poly[0] = 1;
+
+        /* calculate error locator polynomial */
+        for (i = 0; i < miss_poly->degree; i++) {
+                x.poly[1] = rs_op.exp(rs_conf.n - 1 - miss_poly->poly[i], rs_conf.m);
+                poly_op.mult(&q, &x, &mult);
+
+                for(j = 0; j < mult.degree; j++)
+                        q.poly[j] = mult.poly[j];
+        }
+
+
+        /* calculate error evaluator polynomial */
+        for (i = 0; i < miss_poly->degree; i++)
+                p.poly[i] = synd->poly[i];
+
+        poly_op.dump("P_POLY",&p);
+
+        poly_op.free(&mult);
+        poly_op.init(&mult, miss_poly->degree + q.degree - 1, q.base, "MULT");
+
+        poly_op.mult(&p, &q, &mult);
+
+        poly_op.dump("MULT",&mult);
+
+        for (i = miss_poly->degree - 1; i >= 0; i--) {
+                printf("%d ",mult.poly[i]);
+                p.poly[i] = mult.poly[i];
+        }
+        p.degree = miss_poly->degree - 1;
+
+        poly_op.dump("P_POLY",&p);
+
+        /* derivate error locator polynomial, even degree 0 */
+        for (j=0, i=0; i <= q.degree; i++){
+                if(i&0x1) {
+                        qprime.poly[j] = q.poly[i];
+                        j++;
+                }
+        }
+        poly_op.dump("P_PRIME_POLY",&qprime);
+
+        /* compute correction */
+        for (i = 0; i <= miss_poly->degree; i++) {
+                t = rs_op.exp(miss_poly->poly[i] + 256 - rs_conf.n, rs_conf.m);
+                y = poly_op.eval(&p, t);
+                z = poly_op.eval(&qprime, rs_op.mult(t,t,rs_conf.m));
+                enc_symbols->poly[i] ^= rs_op.div(y, rs_op.mult(t,z,rs_conf.m), rs_conf.m);
+        }
+
+        poly_op.dump("DECO",&enc_symbols);
+        return 0;
+}
+
