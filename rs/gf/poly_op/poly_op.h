@@ -30,7 +30,7 @@ typedef struct rs_polynomial rs_poly;
  */
 
 int8_t gf_gen_poly(rs_poly *gen_poly, uint8_t alpha);
-int8_t gf_poly_mult(rs_poly *poly_a, rs_poly *poly_b, rs_poly *poly_mult);
+int8_t gf_poly_mult(rs_poly *a_poly, rs_poly *b_poly, rs_poly *mult_poly);
 uint8_t gf_poly_eval(rs_poly *poly, uint8_t value);
 void dump_poly(char * str, rs_poly *poly);
 int8_t gf_init_poly(rs_poly *poly, uint8_t degree, uint8_t base, char *str);
