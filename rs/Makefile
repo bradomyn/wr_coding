@@ -3,9 +3,12 @@ LDFLAGS=
 GF_SOURCE=gf/galois/galois.c gf/poly_op/poly_op.c
 SOURCES=main.c rs.c $(GF_SOURCE)
 OBJECTS=$(SOURCES:.c=.o)
-TARGET=rs
+TARGET=rs galoys
 
 all: $(TARGET)
+
+galoys : 
+	$(MAKE) -C gf/galois
     
 rs : $(OBJECTS) 
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
