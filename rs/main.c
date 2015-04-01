@@ -6,15 +6,13 @@
 #include <time.h>
 
 #include "rs.h"
-
-struct reed_solomon_conf rs_conf;
+#include <poly_op.h>
 
 static int random_at_most(int max_n) {
 
         int min = 1;
         srand ( time(NULL) );
         return rand() % (max_n + 1 - min) + min;
-
 }
 
 int main(int argc, char **argv) {
@@ -100,9 +98,10 @@ int main(int argc, char **argv) {
         }
 
         for (i = 0; i < num_error; i++) {
-                error_loc = random_at_most(rs_conf.n_k);
-                miss_symbols.poly[i] = error_loc;
-                enc_symbols.poly[error_loc] = 0x0;
+                error_loc = random_at_most(rs_conf.n);
+                miss_symbols.poly[i] = error_loc+i;
+                enc_symbols.poly[error_loc+i] = 0x0;
+                printf("ERror in %d %d\n", error_loc+i, enc_symbols.poly[error_loc+i]);
         }
 
         poly_op.dump("RX_POLY",&enc_symbols);

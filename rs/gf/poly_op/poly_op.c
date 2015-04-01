@@ -93,3 +93,13 @@ int8_t gf_poly_mult(rs_poly *a_poly, rs_poly *b_poly, rs_poly *mult_poly) {
         }
         return 0;
 }
+
+struct polynomial_op poly_op = {
+        .init = gf_init_poly,
+        .free = gf_free_poly,
+        .dump = dump_poly,
+        .gen_poly = gf_gen_poly,
+        .eval = gf_poly_eval,
+        .mult = gf_poly_mult,
+};
+

@@ -808,3 +808,12 @@ int galois_split_w8_multiply(int x, int y)
   }
   return accumulator;
 }
+
+struct reed_solomon_op rs_op = {
+        .sum = galois_single_sum,
+        .mult = galois_single_multiply,
+        .div = galois_single_divide,
+        .exp = galois_ilog,
+        .log = galois_log,
+};
+

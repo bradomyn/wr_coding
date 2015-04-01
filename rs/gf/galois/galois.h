@@ -26,6 +26,9 @@ plank@cs.utk.edu
 
  */
 
+#ifndef __GALOIS__
+#define __GALOIS__
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -85,3 +88,13 @@ void galois_w32_region_multiply(char *region,       /* Region to multiply */
                                   char *r2,         /* If r2 != NULL, products go here.
                                                        Otherwise region is overwritten */
                                   int add);         /* If (r2 != NULL && add) the produce is XOR'd with r2 */
+
+struct reed_solomon_op {
+        int (*sum)(int a, int b, int w);
+        int (*mult)(int a, int b, int w);
+        int (*div)(int a, int b, int w);
+        int (*exp)(int a, int w);
+        int (*log)(int a, int w);
+};
+
+#endif

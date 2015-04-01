@@ -1,26 +1,10 @@
 #include "rs.h"
 
-struct reed_solomon_op rs_op = {
-        .sum = galois_single_sum,
-        .mult = galois_single_multiply,
-        .div = galois_single_divide,
-        .exp = galois_ilog,
-        .log = galois_log,
-};
 
 struct reed_solomon_conf rs_conf;
 
 rs_poly gen_poly;
 rs_poly synd;
-
-struct polynomial_op poly_op = {
-        .init = gf_init_poly,
-        .free = gf_free_poly,
-        .dump = dump_poly,
-        .gen_poly = gf_gen_poly,
-        .eval = gf_poly_eval,
-        .mult = gf_poly_mult,
-};
 
 void rs_calc_sydrom(rs_poly *enc_symbols) {
 
@@ -141,8 +125,6 @@ int8_t rs_erase(rs_poly *enc_symbols, rs_poly *synd, rs_poly *miss_poly) {
         }
 
         p.degree = miss_poly->degree - 1;
-
-        poly_op.dump("P_POLY",&p);
 
         /* derivate error locator polynomial, even degree 0 */
         for (j=0, i=0; i <= q.degree; i++){
