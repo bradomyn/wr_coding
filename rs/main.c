@@ -3,10 +3,19 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <string.h>
+#include <time.h>
 
 #include "rs.h"
 
 struct reed_solomon_conf rs_conf;
+
+static int random_at_most(int max_n) {
+
+        int min = 1;
+        srand ( time(NULL) );
+        return rand() % (max_n + 1 - min) + min;
+
+}
 
 int main(int argc, char **argv) {
 
@@ -16,6 +25,7 @@ int main(int argc, char **argv) {
         rs_poly miss_symbols;
         rs_poly enc_symbols;
         rs_poly dec_symbols;
+        uint8_t num_error, error_loc;
 
         uint16_t len;
 
@@ -27,7 +37,7 @@ int main(int argc, char **argv) {
                 printf("-k, \t\t Length message in src_symbols \n");
                 printf("-n, \t\t Redundant src_symbols \n");
                 printf("-m, \t\t Galois Filed index GF(2^m), 4 or 8 \n");
-                printf("-s, \t\t String\n");
+                printf("-s, \t\t string of 8 bits hex values\n");
                 return 0;
         }
 
@@ -78,25 +88,32 @@ int main(int argc, char **argv) {
 
         poly_op.init(&dec_symbols, rs_conf.k, rs_conf.m, "DEC_SYMB");
 
-        //enc_symbols.poly[24] = 0;
-        //enc_symbols.poly[23] = 0;
-        //poly_op.init(&miss_symbols, 2, rs_conf.m, "MISS_SYMB");
-        //miss_symbols.poly[0] = 24;
-        //miss_symbols.poly[1] = 23;
-        
-        enc_symbols.poly[25] = 0;
-        poly_op.init(&miss_symbols, 1, rs_conf.m, "MISS_SYMB");
-        miss_symbols.poly[0] = 25;
 
-        //poly_op.init(&miss_symbols, 2, rs_conf.m, "MISS_SYMB");
-        //miss_symbols.poly[0] = 2;
-        //miss_symbols.poly[1] = 9;
-        //enc_symbols.poly[2] = 1;
-        //enc_symbols.poly[9] = 11;
+        num_error = random_at_most(rs_conf.n - rs_conf.k + 1);
+
+        printf("-------SENDING SYMBOLS----- %d SYMBOLS ERASED ----\n",num_error);
+
+        poly_op.init(&miss_symbols, num_error, rs_conf.m, "MISS_SYMB");
+
+        if (num_error > rs_conf.n_k) {
+                printf("ERROR: more erasure than RS can fix :(\n");
+        }
+
+        for (i = 0; i < num_error; i++) {
+                error_loc = random_at_most(rs_conf.n_k);
+                miss_symbols.poly[i] = error_loc;
+                enc_symbols.poly[error_loc] = 0x0;
+        }
 
         poly_op.dump("RX_POLY",&enc_symbols);
 
         rs_decode(&enc_symbols, &dec_symbols, &miss_symbols);
 
+        poly_op.free(&src_symbols);
+        poly_op.free(&miss_symbols);
+        poly_op.free(&enc_symbols);
+        poly_op.free(&dec_symbols);
+
+        rs_close();
         return 0;
 }
