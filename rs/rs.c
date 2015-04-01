@@ -113,23 +113,26 @@ int8_t rs_erase(rs_poly *enc_symbols, rs_poly *synd, rs_poly *miss_poly) {
 
 
         q.poly[0] = 1;
-        x.poly[1] = 1;
+        x.poly[0] = 1;
 
         /* calculate error locator polynomial */
         for (i = 0; i < miss_poly->degree; i++) {
-                x.poly[0] = rs_op.exp(rs_conf.n - 1 - miss_poly->poly[i], rs_conf.m);
+                x.poly[1] = rs_op.exp(rs_conf.n - 1 - miss_poly->poly[i], rs_conf.m);
                 poly_op.mult(&q, &x, &mult);
 
                 for(j = 0; j < mult.degree; j++)
                         q.poly[j] = mult.poly[j];
         }
 
+        poly_op.dump("Q_POLY",&q);
 
         /* calculate error evaluator polynomial */
         for (i = 0; i < miss_poly->degree; i++)
+                //p.poly[miss_poly->degree - i - 1] = synd->poly[i];
                 p.poly[i] = synd->poly[i];
 
-        poly_op.dump("P_POLY",&p);
+        p.degree = miss_poly->degree;
+        poly_op.dump("P_POLY-s",&p);
 
         poly_op.free(&mult);
         poly_op.init(&mult, miss_poly->degree + q.degree - 1, q.base, "MULT");
@@ -138,11 +141,12 @@ int8_t rs_erase(rs_poly *enc_symbols, rs_poly *synd, rs_poly *miss_poly) {
 
         poly_op.dump("MULT",&mult);
 
-        //for (i = miss_poly->degree - 1; i >= 0; i--) {
-        for (i = 0; i < miss_poly->degree; i++) {
+        for (i = 0; i <= miss_poly->degree; i++) {
                 printf("%d ",mult.poly[i]);
                 p.poly[i] = mult.poly[i];
         }
+
+        printf("\n");
 
         p.degree = miss_poly->degree - 1;
 
@@ -152,9 +156,12 @@ int8_t rs_erase(rs_poly *enc_symbols, rs_poly *synd, rs_poly *miss_poly) {
         for (j=0, i=0; i <= q.degree; i++){
                 if(i&0x1) {
                         qprime.poly[j] = q.poly[i];
+                        printf("%d ",q.poly[i]);
                         j++;
                 }
         }
+        qprime.degree = j;
+
         poly_op.dump("P_PRIME_POLY",&qprime);
 
         /* compute correction */
@@ -162,9 +169,9 @@ int8_t rs_erase(rs_poly *enc_symbols, rs_poly *synd, rs_poly *miss_poly) {
                 t = rs_op.exp(miss_poly->poly[i] + 256 - rs_conf.n, rs_conf.m);
                 y = poly_op.eval(&p, t);
                 z = poly_op.eval(&qprime, rs_op.mult(t,t,rs_conf.m));
-                enc_symbols->poly[miss_poly->poly[i]] ^= rs_op.div(y, rs_op.mult(t,z,rs_conf.m), rs_conf.m);
+                printf("repair symb = %d -- %d \n",rs_op.div(y, rs_op.mult(t,z,rs_conf.m), rs_conf.m), enc_symbols->degree - miss_poly->poly[i] - 1);
+                enc_symbols->poly[enc_symbols->degree - miss_poly->poly[i] - 1] ^= rs_op.div(y, rs_op.mult(t,z,rs_conf.m), rs_conf.m);
         }
-        printf("\n");
 
         poly_op.dump("DECO_POLY",enc_symbols);
         return 0;
