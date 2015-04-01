@@ -1,6 +1,6 @@
-#include "wr_fec.h"
-#include "ldpc.h"
-#include "reed_solomon.h"
+#include <rs.h>
+//#include <ldpc.h>
+#include "wr_coding.h"
 
 void* create_payload(struct wr_fec_opt *fec_opt) {
 
@@ -62,10 +62,10 @@ int8_t init_encoder(struct wr_fec_opt *fec_opt) {
 
         switch(fec_opt->fec_type) {
                 case LDPC:
-                        res = ldpc_init(fec_opt);
+                        //res = ldpc_init(fec_opt);
                         break;
                 case REED_SOLOMON:
-                        res = rs_init(fec_opt);
+                        //res = rs_init(fec_opt);
                         break;
                 case LT:
                         break;
@@ -84,10 +84,10 @@ int8_t create_redundant_payload(void *eth_payload, void *encoded_data, struct wr
 
         switch(fec_opt->fec_type) {
                 case LDPC:
-                        res = ldpc_encode(eth_payload, encoded_data, fec_opt);
+                        //res = ldpc_encode(eth_payload, encoded_data, fec_opt);
                         break;
                 case REED_SOLOMON:
-                        res = rs_encode(eth_payload, encoded_data, fec_opt);
+                        //res = rs_encode(eth_payload, encoded_data, fec_opt);
                         break;
                 case LT:
                         break;

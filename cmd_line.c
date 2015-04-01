@@ -1,4 +1,4 @@
-#include "wr_fec.h"
+#include "wr_coding.h"
 
 struct cmd_line_arg {
         char *arg;
