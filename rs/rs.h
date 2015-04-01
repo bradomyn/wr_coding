@@ -36,6 +36,7 @@ extern rs_poly gen_poly;
 extern rs_poly synd;
 
 int8_t rs_init();
+void   rs_close();
 int8_t rs_encode(rs_poly *src_symbols, rs_poly *enc_symbols);
 int8_t rs_decode(rs_poly *encoded_data, rs_poly *decoded_data, rs_poly *miss_poly);
 int8_t rs_erase(rs_poly *enc_symbols, rs_poly *synd, rs_poly *miss_poly);

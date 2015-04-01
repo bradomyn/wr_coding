@@ -50,6 +50,12 @@ int8_t rs_init() {
         return 0;
 }
 
+void rs_close() {
+
+        poly_op.free(&gen_poly);
+        poly_op.free(&synd);
+}
+
 int8_t rs_encode(rs_poly *src_symbols, rs_poly *enc_symbols) {
 
         int16_t  i, j, degree_enc, degree_gen;
@@ -157,6 +163,13 @@ int8_t rs_erase(rs_poly *enc_symbols, rs_poly *synd, rs_poly *miss_poly) {
         }
 
         poly_op.dump("DECO_POLY",enc_symbols);
+
+        poly_op.free(&x);
+        poly_op.free(&q);
+        poly_op.free(&qprime);
+        poly_op.free(&mult);
+        poly_op.free(&p);
+
         return 0;
 }
 
