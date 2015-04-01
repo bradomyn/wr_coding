@@ -25,7 +25,7 @@ struct polynomial_op {
         int8_t (*init)(rs_poly *poly, uint8_t degree, uint8_t base, char *str);
         void (*free)(rs_poly *poly);
         void (*dump)(char *str, rs_poly *poly);
-        uint8_t (*gen_poly)(rs_poly *gen_poly, uint8_t alpha);
+        int8_t (*gen_poly)(rs_poly *gen_poly, uint8_t alpha);
         uint8_t (*eval)(rs_poly *poly, uint8_t value);
         int8_t (*mult)(rs_poly *a_poly, rs_poly *b_poly, rs_poly *mult_poly);
 };

@@ -84,8 +84,6 @@ int8_t rs_encode(rs_poly *src_symbols, rs_poly *enc_symbols) {
 
 int8_t rs_decode(rs_poly *enc_symbols, rs_poly *decoded_data, rs_poly *miss_poly) {
 
-        uint8_t i;
-
         rs_calc_sydrom(enc_symbols);
 
         poly_op.dump("SYND_PO", &synd);
@@ -161,7 +159,6 @@ int8_t rs_erase(rs_poly *enc_symbols, rs_poly *synd, rs_poly *miss_poly) {
                 }
         }
         qprime.degree = j;
-
         poly_op.dump("P_PRIME_POLY",&qprime);
 
         /* compute correction */
